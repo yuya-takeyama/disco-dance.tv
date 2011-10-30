@@ -1,19 +1,24 @@
-var $view, player;
+var $view, player, socket;
 
 function onYouTubePlayerReady(playerId) {
   player = document.getElementById('ytplayer');
 
-  var play = function(url) {
-    url.match(/\?v=([^&]+)/);
-    var id = RegExp.$1;
-    if (typeof id === 'string' && id.length > 0) {
-      player.loadVideoById(id);
-    }
+  var play = function(id) {
+    player.loadVideoById(id);
   };
 
   $view.click(function () {
     var url = $('#video-url').val();
-    play(url);
+    url.match(/\?v=([^&]+)/);
+    var id = RegExp.$1;
+    if (typeof id === 'string' && id.length > 0) {
+      play(id);
+      socket.emit('play', id);
+    }
+  });
+
+  socket.on('play', function (id) {
+    play(id);
   });
 }
 
@@ -24,4 +29,9 @@ $(function () {
     "425", "365", "8", null, null, {allowScriptAccess: 'always'}, {id: 'ytplayer'}
   );
   $view = $('#view');
+  socket = io.connect('http://' + document.location.host);
+
+  socket.on('hello', function (data) {
+    console.log(data);
+  });
 });
