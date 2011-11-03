@@ -21,9 +21,10 @@ var DiscoDanceTV = {};
    * @param {Object} deps The objects Disco-Dance TV depends on.
    */
   DiscoDanceTV.Application = function (deps) {
-    this.socket = deps.socket; // Socket.IO
-    this.jQuery = deps.jQuery; // jQuery
-    this.player = deps.player; // DiscoDanceTV.Player
+    this.socket  = deps.socket;  // Socket.IO
+    this.jQuery  = deps.jQuery;  // jQuery
+    this.player  = deps.player;  // DiscoDanceTV.Player
+    this.counter = deps.counter; // DiscoDanceTV.Counter
   };
 
   DiscoDanceTV.Application.prototype = {};
@@ -53,9 +54,10 @@ var DiscoDanceTV = {};
   };
 
   Application.defineEventHandlers = function () {
-    var player = this.player
-      , socket = this.socket
-      , $      = this.jQuery;
+    var player  = this.player
+      , socket  = this.socket
+      , $       = this.jQuery
+      , counter = this.counter;
 
     $('#view').click(function () {
       var url = $('#video-url').val();
@@ -65,6 +67,10 @@ var DiscoDanceTV = {};
 
     socket.on('hello', function (data) {
       console.log(data);
+    });
+
+    socket.on('counter', function (data) {
+      counter.setCount(data);
     });
 
     socket.on('play', function (data) {
@@ -118,3 +124,62 @@ var DiscoDanceTV = {};
     this._ytPlayer.stopVideo();
   };
 })(DiscoDanceTV);
+
+/**
+ * DiscoDanceTV.Counter
+ *
+ * @author Yuya Takeyama
+ */
+(function (DiscoDanceTV) {
+  /**
+   * Constructor.
+   *
+   * @param {DiscoDanceTV.View.Counter} view
+   */
+  DiscoDanceTV.Counter = function (view) {
+    this.count = 0;
+    this.view = view;
+  };
+
+  var Counter = DiscoDanceTV.Counter.prototype;
+
+  Counter.notify = function () {
+    this.view.update(this);
+  };
+
+  Counter.setCount = function (count) {
+    this.count = count;
+    this.notify();
+  };
+
+  Counter.getCount = function () {
+    return this.count;
+  };
+})(DiscoDanceTV);
+
+DiscoDanceTV.View = {};
+
+/**
+ * DiscoDanceTV.View.Counter
+ *
+ * Indicates how many people are connectiong.
+ *
+ * @author Yuya Takeyama
+ */
+(function (View) {
+  /**
+   * Constructor.
+   *
+   * @param {Object} deps
+   */
+  View.Counter = function (element) {
+    this.element = element;
+  };
+
+  var Counter = View.Counter.prototype;
+
+  Counter.update = function (counter) {
+    var count = counter.getCount();
+    this.element.html(count + ' people are viewing now.');
+  };
+})(DiscoDanceTV.View);

@@ -10,10 +10,12 @@
       $(function () {
         var player = new DiscoDanceTV.Player(window)
           , socket = io.connect('http://' + document.location.host)
+          , counter = new DiscoDanceTV.Counter(new DiscoDanceTV.View.Counter($('#counter')))
           , app = new DiscoDanceTV.Application({
               socket: socket,
               jQuery: jQuery,
               player: player,
+              counter: counter,
           });
 
         app.run();
