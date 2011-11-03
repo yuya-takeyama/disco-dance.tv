@@ -1,12 +1,17 @@
-var $view, player, socket;
+var player, socket;
 
-function onYouTubePlayerReady(playerId) {
-  player = document.getElementById('ytplayer');
+function onYouTubePlayerAPIReady() {
+  player = new YT.Player('video', {
+    width: 425,
+    height: 365,
+    videoId: 'aCNIlZz-Aqk',
+    events: {
+      onReady: onPlayerReady,
+      onStateChange: onPlayerStateChange,
+    },
+  });
 
-  var play = function(id) {
-    player.loadVideoById(id);
-  };
-
+  /*
   $view.click(function () {
     var url = $('#video-url').val();
     url.match(/\?v=([^&]+)/);
@@ -16,20 +21,31 @@ function onYouTubePlayerReady(playerId) {
       socket.emit('play', id);
     }
   });
+  */
 
   socket.on('play', function (id) {
     play(id);
   });
 }
 
+function onPlayerReady(event) {
+  event.target.playVideo();
+}
+
+function onPlayerStateChange(event) {
+}
+
+function stopVideo() {
+  player.stopVideo();
+}
+
 $(function () {
-  swfobject.embedSWF(
-    'http://www.youtube.com/apiplayer?enablejsapi=1&playerapiid=ytplayer',
-    'video',
-    "425", "365", "8", null, null, {allowScriptAccess: 'always'}, {id: 'ytplayer'}
-  );
-  $view = $('#view');
   socket = io.connect('http://' + document.location.host);
+
+  var tag = document.createElement('script');
+  tag.src = "http://www.youtube.com/player_api";
+  var firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
   socket.on('hello', function (data) {
     console.log(data);
