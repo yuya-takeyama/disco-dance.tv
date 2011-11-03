@@ -41,7 +41,7 @@ var DiscoDanceTV = {};
       height: 365,
       playerVars: {
         autoplay: 0,
-        controls: 0,
+        controls: 1,
       },
       events: {
       onReady: function () { console.log('onReady'); },
