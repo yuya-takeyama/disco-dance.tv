@@ -5,7 +5,25 @@
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.3/jquery.min.js"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
     <script type="text/javascript" src="/javascripts/socket.io.js"></script>
-    <script type="text/javascript" src="/javascripts/disco-dance.js"></script>
+    <script type="text/javascript" src="/javascripts/disco-dance.tv.js"></script>
+    <script type="text/javascript">
+      $(function () {
+        var player = new DiscoDanceTV.Player(window)
+          , socket = io.connect('http://' + document.location.host)
+          , app = new DiscoDanceTV.Application({
+              socket: socket,
+              jQuery: jQuery,
+              player: player,
+          });
+
+        app.run();
+
+        // Exports objects to global context for debugging reason.
+        window.player = player;
+        window.socket = socket;
+        window.app = app;
+      });
+    </script>
     <link rel='stylesheet' href='/stylesheets/style.css' />
   </head>
   <body>
