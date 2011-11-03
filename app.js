@@ -9,6 +9,9 @@ var express = require('express')
 var app = module.exports = express.createServer()
   , io = require('socket.io').listen(app);
 
+var Counter = require('./lib/counter')
+  , counter = new Counter;
+
 // Configuration
 
 app.configure(function(){
@@ -38,7 +41,15 @@ console.log("Express server listening on port %d in %s mode", app.address().port
 io.sockets.on('connection', function (socket) {
   socket.emit('hello', "Hello, I'm Disco-Dance.tv server!");
 
+  counter.incr();
+  io.sockets.emit('counter', counter.count);
+
   socket.on('play', function (data) {
     socket.broadcast.emit('play', data);
+  });
+
+  socket.on('disconnect', function () {
+    counter.decr();
+    io.sockets.emit('counter', counter.count);
   });
 });
