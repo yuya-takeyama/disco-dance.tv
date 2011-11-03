@@ -1,53 +1,98 @@
-var player, socket;
+/**
+ * DiscoDanceTV
+ *
+ * Just a namespace.
+ *
+ * @author Yuya Takeyama
+ */
+var DiscoDanceTV = {};
 
-function onYouTubePlayerAPIReady() {
-  player = new YT.Player('video', {
-    width: 425,
-    height: 365,
-    videoId: 'aCNIlZz-Aqk',
-    events: {
-      onReady: onPlayerReady,
-      onStateChange: onPlayerStateChange,
-    },
-  });
+/**
+ * DiscoDanceTV.Application
+ *
+ * Entry-point of Disco Dance TV.
+ *
+ * @author Yuya Takeyama
+ */
+(function (DiscoDanceTV) {
+  /**
+   * DiscoDance TV Application.
+   *
+   * @param {Object} deps The objects Disco-Dance TV depends on.
+   */
+  DiscoDanceTV.Application = function (deps) {
+    this.socket = deps.socket; // Socket.IO
+    this.jQuery = deps.jQuery; // jQuery
+    this.player = deps.player; // DiscoDanceTV.Player
+  };
 
-  /*
-  $view.click(function () {
-    var url = $('#video-url').val();
-    url.match(/\?v=([^&]+)/);
-    var id = RegExp.$1;
-    if (typeof id === 'string' && id.length > 0) {
-      play(id);
-      socket.emit('play', id);
-    }
-  });
-  */
+  DiscoDanceTV.Application.prototype = {};
 
-  socket.on('play', function (id) {
-    play(id);
-  });
-}
+  var Application = DiscoDanceTV.Application.prototype;
 
-function onPlayerReady(event) {
-  event.target.playVideo();
-}
+  Application.run = function () {
+    var tag = document.createElement('script');
+    tag.src = "http://www.youtube.com/player_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-function onPlayerStateChange(event) {
-}
+    this.player.embeds('video', {
+      width: 425,
+      height: 365,
+      videoId: 'aCNIlZz-Aqk',
+      playerVars: {
+        autoplay: 1,
+        controls: 0,
+      },
+      events: {
+      onReady: function () { console.log('onReady'); },
+      onStateChange: function () { console.log('onStateChange'); },
+      },
+    });
 
-function stopVideo() {
-  player.stopVideo();
-}
+    this.socket.on('hello', function (data) {
+      console.log(data);
+    });
+  };
+})(DiscoDanceTV);
 
-$(function () {
-  socket = io.connect('http://' + document.location.host);
+/**
+ * DiscoDanceTV.Player
+ *
+ * Encapsulates YouTube Player API and provides simplified APIs.
+ *
+ * @author Yuya Takeyama
+ */
+(function (DiscoDanceTV) {
+  /**
+   * Constructor.
+   *
+   * @param {Object} context An object will be set onYouTubePlayerAPIReady() function.
+   */
+  DiscoDanceTV.Player = function (context) {
+    this._context = context;
+  };
 
-  var tag = document.createElement('script');
-  tag.src = "http://www.youtube.com/player_api";
-  var firstScriptTag = document.getElementsByTagName('script')[0];
-  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+  DiscoDanceTV.Player.prototype = {};
+  var Player = DiscoDanceTV.Player.prototype;
 
-  socket.on('hello', function (data) {
-    console.log(data);
-  });
-});
+  /**
+   * Embedes and initializes YouTube Player.
+   *
+   * @param {String} elementId Target ID of HTMLElement to embed YouTube player.
+   * @param {Object} params    Configuration of YouTube player.
+   */
+  Player.embeds = function (elementId, params) {
+    this._context.onYouTubePlayerAPIReady = function () {
+      this._ytPlayer = new YT.Player(elementId, params);
+    };
+  };
+
+  Player.play = function () {
+    this._ytPlayer.playVideo();
+  };
+
+  Player.stop = function () {
+    this._ytPlayer.stopVideo();
+  };
+})(DiscoDanceTV);

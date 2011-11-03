@@ -5,7 +5,17 @@
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.3/jquery.min.js"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
     <script type="text/javascript" src="/javascripts/socket.io.js"></script>
-    <script type="text/javascript" src="/javascripts/disco-dance.js"></script>
+    <script type="text/javascript" src="/javascripts/disco-dance.tv.js"></script>
+    <script type="text/javascript">
+      $(function () {
+        var app = new DiscoDanceTV.Application({
+          socket: io.connect('http://' + document.location.host),
+          jQuery: jQuery,
+          player: new DiscoDanceTV.Player(window),
+        });
+        app.run();
+      });
+    </script>
     <link rel='stylesheet' href='/stylesheets/style.css' />
   </head>
   <body>
