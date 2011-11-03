@@ -83,8 +83,9 @@ var DiscoDanceTV = {};
    * @param {Object} params    Configuration of YouTube player.
    */
   Player.embeds = function (elementId, params) {
+    var self = this;
     this._context.onYouTubePlayerAPIReady = function () {
-      this._ytPlayer = new YT.Player(elementId, params);
+      self._ytPlayer = new YT.Player(elementId, params);
     };
   };
 
