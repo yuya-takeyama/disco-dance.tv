@@ -32,11 +32,6 @@ var DiscoDanceTV = {};
   var Application = DiscoDanceTV.Application.prototype;
 
   Application.run = function () {
-    var tag = document.createElement('script');
-    tag.src = "http://www.youtube.com/player_api";
-    var firstScriptTag = document.getElementsByTagName('script')[0];
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
     this.player.embeds('video', {
       width: 425,
       height: 365,
@@ -61,8 +56,12 @@ var DiscoDanceTV = {};
 
     $('#view').click(function () {
       var url = $('#video-url').val();
-      player.play(url);
-      socket.emit('play', url);
+      url.match(/\?v=([^&]+)/);
+      var videoId = RegExp.$1;
+      if (typeof videoId === 'string' && videoId !== '') {
+        player.play(videoId);
+        socket.emit('play', videoId);
+      }
     });
 
     socket.on('hello', function (data) {
@@ -106,18 +105,37 @@ var DiscoDanceTV = {};
    * @param {Object} params    Configuration of YouTube player.
    */
   Player.embeds = function (elementId, params) {
+    var tag = document.createElement('script');
+    tag.src = "http://www.youtube.com/player_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
     var self = this;
     this._context.onYouTubePlayerAPIReady = function () {
       self._ytPlayer = new YT.Player(elementId, params);
     };
   };
 
-  Player.play = function (url) {
-    if (url) {
-      console.log(url);
-      this._ytPlayer.loadVideoByUrl(url);
+  Player.play = function (videoId) {
+    if (videoId) {
+
+      var self = this;
+      this._ytPlayer = new YT.Player('video', {
+        width: 425,
+        height: 365,
+        videoId: videoId,
+        playerVars: {
+          autoplay: 1,
+          controls: 1,
+        },
+        events: {
+          onReady: function (event) { event.target.playVideo(); },
+          onStateChange: function () { console.log('onStateChange'); },
+        },
+      });
+    } else {
+      this._ytPlayer.playVideo();
     }
-    this._ytPlayer.playVideo();
   };
 
   Player.stop = function () {
