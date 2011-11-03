@@ -67,6 +67,10 @@ var DiscoDanceTV = {};
       console.log(data);
     });
 
+    socket.on('counter', function (data) {
+      console.log(data + ' people are connectiong now.');
+    });
+
     socket.on('play', function (data) {
       player.play(data);
     });
