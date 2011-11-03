@@ -39,7 +39,6 @@ var DiscoDanceTV = {};
     this.player.embeds('video', {
       width: 425,
       height: 365,
-      videoId: 'aCNIlZz-Aqk',
       playerVars: {
         autoplay: 0,
         controls: 0,
@@ -50,8 +49,26 @@ var DiscoDanceTV = {};
       },
     });
 
-    this.socket.on('hello', function (data) {
+    this.defineEventHandlers();
+  };
+
+  Application.defineEventHandlers = function () {
+    var player = this.player
+      , socket = this.socket
+      , $      = this.jQuery;
+
+    $('#view').click(function () {
+      var url = $('#video-url').val();
+      player.play(url);
+      socket.emit('play', url);
+    });
+
+    socket.on('hello', function (data) {
       console.log(data);
+    });
+
+    socket.on('play', function (data) {
+      player.play(data);
     });
   };
 })(DiscoDanceTV);
@@ -89,7 +106,11 @@ var DiscoDanceTV = {};
     };
   };
 
-  Player.play = function () {
+  Player.play = function (url) {
+    if (url) {
+      console.log(url);
+      this._ytPlayer.loadVideoByUrl(url);
+    }
     this._ytPlayer.playVideo();
   };
 
