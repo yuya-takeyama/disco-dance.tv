@@ -41,7 +41,7 @@ var DiscoDanceTV = {};
       height: 365,
       videoId: 'aCNIlZz-Aqk',
       playerVars: {
-        autoplay: 1,
+        autoplay: 0,
         controls: 0,
       },
       events: {
