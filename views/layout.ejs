@@ -8,12 +8,20 @@
     <script type="text/javascript" src="/javascripts/disco-dance.tv.js"></script>
     <script type="text/javascript">
       $(function () {
-        var app = new DiscoDanceTV.Application({
-          socket: io.connect('http://' + document.location.host),
-          jQuery: jQuery,
-          player: new DiscoDanceTV.Player(window),
-        });
+        var player = new DiscoDanceTV.Player(window)
+          , socket = io.connect('http://' + document.location.host)
+          , app = new DiscoDanceTV.Application({
+              socket: socket,
+              jQuery: jQuery,
+              player: player,
+          });
+
         app.run();
+
+        // Exports objects to global context for debugging reason.
+        window.player = player;
+        window.socket = socket;
+        window.app = app;
       });
     </script>
     <link rel='stylesheet' href='/stylesheets/style.css' />
