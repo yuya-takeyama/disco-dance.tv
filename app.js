@@ -9,7 +9,7 @@ var express = require('express')
 var app = module.exports = express.createServer()
   , io = require('socket.io').listen(app);
 
-var Counter = require('./lib/counter').Counter
+var Counter = require('./lib/counter')
   , counter = new Counter;
 
 // Configuration
