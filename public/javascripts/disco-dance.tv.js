@@ -116,6 +116,12 @@ var DiscoDanceTV = {};
     };
   };
 
+  /**
+   * Loads video and play it.
+   *
+   * @param  {String} videoId YouTube video ID.
+   * @return {void}
+   */
   Player.play = function (videoId) {
     if (videoId) {
 
@@ -138,6 +144,11 @@ var DiscoDanceTV = {};
     }
   };
 
+  /**
+   * Stops player.
+   *
+   * @return {void}
+   */
   Player.stop = function () {
     this._ytPlayer.stopVideo();
   };
@@ -161,6 +172,11 @@ var DiscoDanceTV = {};
 
   var Counter = DiscoDanceTV.Counter.prototype;
 
+  /**
+   * Notfies to view.
+   *
+   * @return {void}
+   */
   Counter.notify = function () {
     this.view.update(this);
   };
@@ -175,6 +191,11 @@ var DiscoDanceTV = {};
   };
 })(DiscoDanceTV);
 
+/**
+ * DiscoDanceTV.View
+ *
+ * Just a namespace.
+ */
 DiscoDanceTV.View = {};
 
 /**
@@ -196,6 +217,12 @@ DiscoDanceTV.View = {};
 
   var Counter = View.Counter.prototype;
 
+  /**
+   * Updates display.
+   *
+   * @param  {DiscoDanceTV.Counter} counter
+   * @return {void}
+   */
   Counter.update = function (counter) {
     var count = counter.getCount();
     this.element.html(count + ' people are viewing now.');
