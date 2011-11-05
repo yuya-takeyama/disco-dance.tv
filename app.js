@@ -10,7 +10,11 @@ var app = module.exports = express.createServer()
   , io = require('socket.io').listen(app);
 
 var Counter = require('./lib/counter')
-  , counter = new Counter;
+  , counter = new Counter
+  , VideoState = require('./lib/video_state')
+  , videoState = new VideoState
+  , Room = require('./lib/room')
+  , room = new Room({counter: counter, videoState: videoState});
 
 // Configuration
 
@@ -44,8 +48,11 @@ io.sockets.on('connection', function (socket) {
   counter.incr();
   io.sockets.emit('counter', counter.count);
 
+  socket.emit('play', videoState.createPlayEvent());
+
   socket.on('play', function (data) {
-    socket.broadcast.emit('play', data);
+    videoState.setVideo(data);
+    socket.broadcast.emit('play', {videoId: data, position: 0});
   });
 
   socket.on('disconnect', function () {
