@@ -77,8 +77,10 @@ var DiscoDanceTV = {};
       counter.setCount(data);
     });
 
-    socket.on('play', function (data) {
-      player.play(data);
+    socket.on('play', function (playEvent) {
+      var videoId = playEvent.videoId
+        , position = playEvent.position;
+      player.play(videoId, position);
     });
   };
 })(DiscoDanceTV);
@@ -127,7 +129,7 @@ var DiscoDanceTV = {};
    * @param  {String} videoId YouTube video ID.
    * @return {void}
    */
-  Player.play = function (videoId) {
+  Player.play = function (videoId, position) {
     if (videoId) {
 
       var self = this;
