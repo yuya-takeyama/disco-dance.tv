@@ -80,6 +80,8 @@ var DiscoDanceTV = {};
     socket.on('play', function (playEvent) {
       var videoId = playEvent.videoId
         , position = playEvent.position;
+
+      player.setVideoState(playEvent);
       player.play(videoId, position);
     });
   };
@@ -119,7 +121,9 @@ var DiscoDanceTV = {};
 
     var self = this;
     this._context.onYouTubePlayerAPIReady = function () {
-      self._ytPlayer = new YT.Player(elementId, params);
+      if (self.videoState) {
+        self.play(self.videoState.videoId, self.videoState.position);
+      }
     };
   };
 
@@ -142,7 +146,9 @@ var DiscoDanceTV = {};
           controls: 1,
         },
         events: {
-          onReady: function (event) { event.target.playVideo(); },
+          onReady: function (event) {
+            event.target.loadVideoById(videoId, position);
+          },
           onStateChange: function () { console.log('onStateChange'); },
         },
       });
@@ -158,6 +164,10 @@ var DiscoDanceTV = {};
    */
   Player.stop = function () {
     this._ytPlayer.stopVideo();
+  };
+
+  Player.setVideoState = function (videoState) {
+    this.videoState = videoState;
   };
 })(DiscoDanceTV);
 
