@@ -31,6 +31,11 @@ var DiscoDanceTV = {};
 
   var Application = DiscoDanceTV.Application.prototype;
 
+  /**
+   * Entry point of the application.
+   *
+   * @return {void}
+   */
   Application.run = function () {
     this.player.embeds('video', {
       width: 425,
