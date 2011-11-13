@@ -273,6 +273,8 @@ DiscoDanceTV.View = {};
   View.SearchResult = function (deps) {
     this.jQuery = this.$ = deps.jQuery;
     this.list = deps.list;
+    this.player = deps.player;
+    this.socket = deps.socket;
   };
 
   var SearchResult = View.SearchResult.prototype;
@@ -287,7 +289,7 @@ DiscoDanceTV.View = {};
   SearchResult.update = function (videos) {
     this.clear();
 
-    var i, video;
+    var i, video, player = this.player, socket = this.socket;
     for (i in videos) {
       video = videos[i];
       this.list.append(
@@ -301,6 +303,11 @@ DiscoDanceTV.View = {};
           )
           .append('<br />')
           .append(video.title)
+          .click(function (event) {
+            var videoId = $(this).attr('data-video-id');
+            player.play(videoId);
+            socket.emit('play', videoId);
+          })
       );
     }
   };
