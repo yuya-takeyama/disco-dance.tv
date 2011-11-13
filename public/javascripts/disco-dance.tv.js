@@ -25,6 +25,8 @@ var DiscoDanceTV = {};
     this.jQuery  = deps.jQuery;  // jQuery
     this.player  = deps.player;  // DiscoDanceTV.Player
     this.counter = deps.counter; // DiscoDanceTV.Counter
+    this.jQTubeUtil = deps.jQTubeUtil; // jQTubeUtil
+    this.searchResult = deps.searchResult; // DiscoDanceTV.View.SearchResult
   };
 
   DiscoDanceTV.Application.prototype = {};
@@ -57,7 +59,9 @@ var DiscoDanceTV = {};
     var player  = this.player
       , socket  = this.socket
       , $       = this.jQuery
-      , counter = this.counter;
+      , counter = this.counter
+      , searchResult = this.searchResult
+      , jQTubeUtil   = this.jQTubeUtil;
 
     $('#view').click(function () {
       var url = $('#video-url').val();
@@ -67,6 +71,13 @@ var DiscoDanceTV = {};
         player.play(videoId);
         socket.emit('play', videoId);
       }
+    });
+
+    $('#search-form').submit(function (event) {
+      event.preventDefault();
+      jQTubeUtil.search($('#search-keyword').val(), function (response) {
+        searchResult.update(response.videos);
+      });
     });
 
     socket.on('hello', function (data) {
@@ -243,5 +254,54 @@ DiscoDanceTV.View = {};
   Counter.update = function (counter) {
     var count = counter.getCount();
     this.element.html(count + ' people are viewing now.');
+  };
+})(DiscoDanceTV.View);
+
+/**
+ * DiscoDanceTV.View.SearchResult
+ *
+ * Displays search result.
+ *
+ * @author Yuya Takeyama
+ */
+(function (View) {
+  /**
+   * Constructor.
+   *
+   * @param {Object} deps Dependencies.
+   */
+  View.SearchResult = function (deps) {
+    this.jQuery = this.$ = deps.jQuery;
+    this.list = deps.list;
+  };
+
+  var SearchResult = View.SearchResult.prototype;
+
+  SearchResult.clear = function () {
+    this.list.html('');
+  };
+
+  /**
+   * @param {Array} videos Array of YouTubeVideo object.
+   */
+  SearchResult.update = function (videos) {
+    this.clear();
+
+    var i, video;
+    for (i in videos) {
+      video = videos[i];
+      this.list.append(
+        this.jQuery('<li />')
+          .addClass('video')
+          .attr('data-video-id', video.videoId)
+          .append(
+            this.jQuery('<img />')
+              .attr('src', video.thumbs[3].url)
+              .attr('alt', video.title)
+          )
+          .append('<br />')
+          .append(video.title)
+      );
+    }
   };
 })(DiscoDanceTV.View);

@@ -4,18 +4,28 @@
     <title><%= title %></title>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.3/jquery.min.js"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
+    <script type="text/javascript" src="/javascripts/jQuery.jQTubeUtil.js"></script>
     <script type="text/javascript" src="/javascripts/socket.io.js"></script>
     <script type="text/javascript" src="/javascripts/disco-dance.tv.js"></script>
     <script type="text/javascript">
       $(function () {
+        jQTubeUtil.init({
+          'key': 'AI39si7YfXF_TBiaMOlj6VJifeV2bJD_KsjAbVI5B52g61jhVsa-L8XBmKklOngWTFL-rB3pnqGkoI_keIRWCKRKkPmGSrVoIg'
+        });
+
         var player = new DiscoDanceTV.Player(window)
           , socket = io.connect('http://' + document.location.host)
           , counter = new DiscoDanceTV.Counter(new DiscoDanceTV.View.Counter($('#counter')))
           , app = new DiscoDanceTV.Application({
               socket: socket,
               jQuery: jQuery,
+              jQTubeUtil: jQTubeUtil,
               player: player,
               counter: counter,
+              searchResult: new DiscoDanceTV.View.SearchResult({
+                jQuery: $,
+                list: $('#search-result-list')
+              })
           });
 
         app.run();
