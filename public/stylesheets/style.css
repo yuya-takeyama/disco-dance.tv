@@ -38,20 +38,38 @@ h1 {
 
 #search-result-list {
   list-style-type: none;
+  margin: 0;
   padding: 0;
 }
 
-#search-result-list > li > .video-thumb {
+.video-thumb, .video-detail {
   float: left;
-}
-
-#search-result-list > .video {
-  clear: both;
   display: block;
-  padding: 0.4em 0;
 }
 
-#search-result-list > a:hover {
+.video-thumb {
+  display: block;
+  width: 100px;
+}
+
+.video-detail {
+  width: 250px;
+  padding: 0.3em;
+}
+
+.video-item {
+  clear: both;
+  padding: 0.2em 0;
+  min-height: 70px;
+}
+
+#search-result-list a {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+#search-result-list a:hover {
   color: #ff0;
   background-color: #000;
 }

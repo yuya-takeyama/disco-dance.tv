@@ -275,6 +275,14 @@ DiscoDanceTV.View = {};
     this.list = deps.list;
     this.player = deps.player;
     this.socket = deps.socket;
+
+    var self = this;
+    this._clickListener = function (event) {
+      event.preventDefault();
+      var videoId = $(this).attr('data-video-id');
+      self.player.play(videoId);
+      self.socket.emit('play', videoId);
+    };
   };
 
   var SearchResult = View.SearchResult.prototype;
@@ -289,35 +297,44 @@ DiscoDanceTV.View = {};
   SearchResult.update = function (videos) {
     this.clear();
 
-    var i, video, player = this.player, socket = this.socket;
+    var i
+      , video
+      , player = this.player
+      , socket = this.socket
+      , $ = this.jQuery
+      , thumb
+      , detail
+      , link;
     for (i in videos) {
       video = videos[i];
-      this.list.append(
-        this.jQuery('<a />')
-          .addClass('video')
-          .attr('href', '#')
-          .attr('data-video-id', video.videoId)
-          .append(
-            this.jQuery('<li />')
-              .append(
-                this.jQuery('<img />')
-                  .addClass('video-thumb')
-                  .attr('src', video.thumbs[3].url)
-                  .attr('alt', video.title)
-                  .attr('width', 100)
-              )
-              .append(
-                this.jQuery('<span />')
-                  .addClass('video-detail')
-                  .text(video.title)
-              )
-          ).click(function (event) {
-            event.preventDefault();
-            var videoId = $(this).attr('data-video-id');
-            player.play(videoId);
-            socket.emit('play', videoId);
-          })
-      );
+
+      thumb = $('<span />')
+        .addClass('video-thumb')
+        .append(
+          $('<img />')
+            .attr('src', video.thumbs[2].url)
+            .attr('alt', video.title)
+            .attr('width', 100));
+
+      detail = $('<span />')
+        .addClass('video-detail')
+        .append(
+          $('<span />')
+            .addClass('title')
+            .text(video.title));
+
+      link = $('<a />')
+        .addClass('video-link')
+        .attr('href', '#')
+        .attr('data-video-id', video.videoId)
+        .click(this._clickListener)
+        .append(
+          $('<div />')
+            .addClass('video-item')
+            .append(thumb)
+            .append(detail));
+
+      this.list.append($('<li />').append(link));
     }
   };
 })(DiscoDanceTV.View);
