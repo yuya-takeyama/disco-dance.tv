@@ -80,6 +80,11 @@ var DiscoDanceTV = {};
       });
     });
 
+    $('#chat-form').submit(function (event) {
+      event.preventDefault();
+      socket.emit('chat', $('#chat-text').val());
+    });
+
     socket.on('hello', function (data) {
       console.log(data);
     });
@@ -94,6 +99,12 @@ var DiscoDanceTV = {};
 
       player.setVideoState(playEvent);
       player.play(videoId, position);
+    });
+
+    socket.on('chat', function (data) {
+      $('#chat-messages').prepend(
+        $('<li />')
+          .text(data));
     });
   };
 })(DiscoDanceTV);

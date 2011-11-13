@@ -55,6 +55,10 @@ io.sockets.on('connection', function (socket) {
     socket.broadcast.emit('play', {videoId: data, position: 0});
   });
 
+  socket.on('chat', function (data) {
+    io.sockets.emit('chat', data);
+  });
+
   socket.on('disconnect', function () {
     counter.decr();
     io.sockets.emit('counter', counter.count);
