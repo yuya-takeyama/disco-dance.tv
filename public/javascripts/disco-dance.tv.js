@@ -25,6 +25,8 @@ var DiscoDanceTV = {};
     this.jQuery  = deps.jQuery;  // jQuery
     this.player  = deps.player;  // DiscoDanceTV.Player
     this.counter = deps.counter; // DiscoDanceTV.Counter
+    this.jQTubeUtil = deps.jQTubeUtil; // jQTubeUtil
+    this.searchResult = deps.searchResult; // DiscoDanceTV.View.SearchResult
   };
 
   DiscoDanceTV.Application.prototype = {};
@@ -57,7 +59,9 @@ var DiscoDanceTV = {};
     var player  = this.player
       , socket  = this.socket
       , $       = this.jQuery
-      , counter = this.counter;
+      , counter = this.counter
+      , searchResult = this.searchResult
+      , jQTubeUtil   = this.jQTubeUtil;
 
     $('#view').click(function () {
       var url = $('#video-url').val();
@@ -67,6 +71,13 @@ var DiscoDanceTV = {};
         player.play(videoId);
         socket.emit('play', videoId);
       }
+    });
+
+    $('#search-form').submit(function (event) {
+      event.preventDefault();
+      jQTubeUtil.search($('#search-keyword').val(), function (response) {
+        searchResult.update(response.videos);
+      });
     });
 
     socket.on('hello', function (data) {
@@ -138,7 +149,7 @@ var DiscoDanceTV = {};
 
       var self = this;
       this._ytPlayer = new YT.Player('video', {
-        width: 425,
+        width: 540,
         height: 365,
         videoId: videoId,
         playerVars: {
@@ -243,5 +254,70 @@ DiscoDanceTV.View = {};
   Counter.update = function (counter) {
     var count = counter.getCount();
     this.element.html(count + ' people are viewing now.');
+  };
+})(DiscoDanceTV.View);
+
+/**
+ * DiscoDanceTV.View.SearchResult
+ *
+ * Displays search result.
+ *
+ * @author Yuya Takeyama
+ */
+(function (View) {
+  /**
+   * Constructor.
+   *
+   * @param {Object} deps Dependencies.
+   */
+  View.SearchResult = function (deps) {
+    this.jQuery = this.$ = deps.jQuery;
+    this.list = deps.list;
+    this.player = deps.player;
+    this.socket = deps.socket;
+  };
+
+  var SearchResult = View.SearchResult.prototype;
+
+  SearchResult.clear = function () {
+    this.list.html('');
+  };
+
+  /**
+   * @param {Array} videos Array of YouTubeVideo object.
+   */
+  SearchResult.update = function (videos) {
+    this.clear();
+
+    var i, video, player = this.player, socket = this.socket;
+    for (i in videos) {
+      video = videos[i];
+      this.list.append(
+        this.jQuery('<a />')
+          .addClass('video')
+          .attr('href', '#')
+          .attr('data-video-id', video.videoId)
+          .append(
+            this.jQuery('<li />')
+              .append(
+                this.jQuery('<img />')
+                  .addClass('video-thumb')
+                  .attr('src', video.thumbs[3].url)
+                  .attr('alt', video.title)
+                  .attr('width', 100)
+              )
+              .append(
+                this.jQuery('<span />')
+                  .addClass('video-detail')
+                  .text(video.title)
+              )
+          ).click(function (event) {
+            event.preventDefault();
+            var videoId = $(this).attr('data-video-id');
+            player.play(videoId);
+            socket.emit('play', videoId);
+          })
+      );
+    }
   };
 })(DiscoDanceTV.View);
