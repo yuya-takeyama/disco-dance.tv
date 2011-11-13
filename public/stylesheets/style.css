@@ -1,5 +1,5 @@
 body {
-  padding: 50px;
+  padding: 10px 20px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
@@ -7,11 +7,16 @@ a {
   color: #00B7FF;
 }
 
-#search-form {
-  margin-bottom: 1em;
+h1 {
+  font-size: 150%;
+  margin: 0.3em 0;
 }
 
-#video, #search {
+#content {
+  width: 920px;
+}
+
+#video, #rightbar {
   float: left;
 }
 
@@ -19,11 +24,11 @@ a {
   width: 540px;
 }
 
-#search {
-  font-size: 8pt;
+#rightbar {
+  font-size: 80%;
   width: 360px;
   max-height: 365px;
-  padding: 0 10px;
+  padding: 0;
   overflow: scroll;
 }
 
@@ -33,20 +38,79 @@ a {
 
 #search-result-list {
   list-style-type: none;
+  margin: 0;
+  padding: 0;
+  height: 288px;
+  overflow: scroll;
+}
+
+.video-thumb, .video-detail {
+  float: left;
+  display: block;
+}
+
+.video-thumb {
+  display: block;
+  width: 100px;
+}
+
+.video-detail {
+  width: 200px;
+}
+
+.video-item {
+  clear: both;
+  min-height: 70px;
+}
+
+#search-result-list a {
+  display: block;
+  margin: 0;
   padding: 0;
 }
 
-#search-result-list > li > .video-thumb {
-  float: left;
-}
-
-#search-result-list > .video {
-  clear: both;
-  display: block;
-  padding: 0.4em 0;
-}
-
-#search-result-list > a:hover {
+#search-result-list a:hover {
   color: #ff0;
   background-color: #000;
+}
+
+#counter {
+  clear: both;
+  width: 100%;
+  height: 365px;
+  text-align: right;
+  padding: 0.2em 1em;
+}
+
+#chat-name {
+  width: 20%;
+}
+
+#chat-text {
+  width: 60%;
+}
+
+#chat-messages {
+  height: 288px;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  overflow: scroll;
+}
+
+#chat-messages > li {
+  padding: 0.3em;
+}
+
+#chat-messages > li > .name {
+  font-weight: 900;
+  color: #f88;
+}
+
+#chat-messages > li > .message {
+  text-indent: 1em;
+}
+
+#chat-messages > li > .time {
+  color: #aaa;
 }

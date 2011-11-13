@@ -26,6 +26,7 @@ var DiscoDanceTV = {};
     this.player  = deps.player;  // DiscoDanceTV.Player
     this.counter = deps.counter; // DiscoDanceTV.Counter
     this.jQTubeUtil = deps.jQTubeUtil; // jQTubeUtil
+    this.chat         = deps.chat;         // DiscoDanceTV.Chat
     this.searchResult = deps.searchResult; // DiscoDanceTV.View.SearchResult
   };
 
@@ -60,6 +61,7 @@ var DiscoDanceTV = {};
       , socket  = this.socket
       , $       = this.jQuery
       , counter = this.counter
+      , chat         = this.chat
       , searchResult = this.searchResult
       , jQTubeUtil   = this.jQTubeUtil;
 
@@ -80,6 +82,11 @@ var DiscoDanceTV = {};
       });
     });
 
+    $('#chat-form').submit(function (event) {
+      event.preventDefault();
+      chat.send();
+    });
+
     socket.on('hello', function (data) {
       console.log(data);
     });
@@ -94,6 +101,10 @@ var DiscoDanceTV = {};
 
       player.setVideoState(playEvent);
       player.play(videoId, position);
+    });
+
+    socket.on('chat', function (data) {
+      chat.receive(data);
     });
   };
 })(DiscoDanceTV);
@@ -220,6 +231,55 @@ var DiscoDanceTV = {};
 })(DiscoDanceTV);
 
 /**
+ * DiscoDanceTV.Chat
+ *
+ * @author Yuya Takeyama
+ */
+(function (DiscoDanceTV) {
+  DiscoDanceTV.Chat = function (deps) {
+    this.jQuery   = this.$ = deps.jQuery;
+    this.socket   = deps.socket;
+    this.messages = deps.messages;
+    this._name = this.$('#chat-name');
+    this._input = this.$('#chat-text');
+  };
+
+  var p = DiscoDanceTV.Chat.prototype;
+
+  p.send = function () {
+    var name = this._name.val()
+      , message = this._input.val();
+
+    if (name && name !== '' && message && message !== '') {
+      this.socket.emit('chat', {
+        name: this._name.val(),
+        body: this._input.val(),
+      });
+      this._input.val('');
+    }
+  };
+
+  p.receive = function (message) {
+    var $ = this.$;
+
+    this.messages.prepend(
+      $('<li />')
+        .append(
+          $('<span />')
+            .addClass('name')
+            .text(message.name + ': '))
+        .append(
+          $('<span />')
+            .addClass('message')
+            .text(message.body))
+        .append(
+          $('<span />')
+            .addClass('time')
+            .text(' (' + message.time  + ')')));
+  };
+})(DiscoDanceTV);
+
+/**
  * DiscoDanceTV.View
  *
  * Just a namespace.
@@ -275,6 +335,14 @@ DiscoDanceTV.View = {};
     this.list = deps.list;
     this.player = deps.player;
     this.socket = deps.socket;
+
+    var self = this;
+    this._clickListener = function (event) {
+      event.preventDefault();
+      var videoId = $(this).attr('data-video-id');
+      self.player.play(videoId);
+      self.socket.emit('play', videoId);
+    };
   };
 
   var SearchResult = View.SearchResult.prototype;
@@ -289,35 +357,44 @@ DiscoDanceTV.View = {};
   SearchResult.update = function (videos) {
     this.clear();
 
-    var i, video, player = this.player, socket = this.socket;
+    var i
+      , video
+      , player = this.player
+      , socket = this.socket
+      , $ = this.jQuery
+      , thumb
+      , detail
+      , link;
     for (i in videos) {
       video = videos[i];
-      this.list.append(
-        this.jQuery('<a />')
-          .addClass('video')
-          .attr('href', '#')
-          .attr('data-video-id', video.videoId)
-          .append(
-            this.jQuery('<li />')
-              .append(
-                this.jQuery('<img />')
-                  .addClass('video-thumb')
-                  .attr('src', video.thumbs[3].url)
-                  .attr('alt', video.title)
-                  .attr('width', 100)
-              )
-              .append(
-                this.jQuery('<span />')
-                  .addClass('video-detail')
-                  .text(video.title)
-              )
-          ).click(function (event) {
-            event.preventDefault();
-            var videoId = $(this).attr('data-video-id');
-            player.play(videoId);
-            socket.emit('play', videoId);
-          })
-      );
+
+      thumb = $('<span />')
+        .addClass('video-thumb')
+        .append(
+          $('<img />')
+            .attr('src', video.thumbs[2].url)
+            .attr('alt', video.title)
+            .attr('width', 100));
+
+      detail = $('<span />')
+        .addClass('video-detail')
+        .append(
+          $('<span />')
+            .addClass('title')
+            .text(video.title));
+
+      link = $('<a />')
+        .addClass('video-link')
+        .attr('href', '#')
+        .attr('data-video-id', video.videoId)
+        .click(this._clickListener)
+        .append(
+          $('<div />')
+            .addClass('video-item')
+            .append(thumb)
+            .append(detail));
+
+      this.list.append($('<li />').append(link));
     }
   };
 })(DiscoDanceTV.View);
