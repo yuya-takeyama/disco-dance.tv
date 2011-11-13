@@ -13,5 +13,40 @@ a {
 
 #video, #search {
   float: left;
-  width: 45%;
+}
+
+#video {
+  width: 540px;
+}
+
+#search {
+  font-size: 8pt;
+  width: 360px;
+  max-height: 365px;
+  padding: 0 10px;
+  overflow: scroll;
+}
+
+#search-keyword {
+  width: 90%;
+}
+
+#search-result-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+#search-result-list > li > .video-thumb {
+  float: left;
+}
+
+#search-result-list > .video {
+  clear: both;
+  display: block;
+  padding: 0.4em 0;
+}
+
+#search-result-list > a:hover {
+  color: #ff0;
+  background-color: #000;
 }

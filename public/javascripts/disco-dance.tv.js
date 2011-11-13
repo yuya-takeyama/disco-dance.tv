@@ -149,7 +149,7 @@ var DiscoDanceTV = {};
 
       var self = this;
       this._ytPlayer = new YT.Player('video', {
-        width: 425,
+        width: 540,
         height: 365,
         videoId: videoId,
         playerVars: {
@@ -293,17 +293,26 @@ DiscoDanceTV.View = {};
     for (i in videos) {
       video = videos[i];
       this.list.append(
-        this.jQuery('<li />')
+        this.jQuery('<a />')
           .addClass('video')
+          .attr('href', '#')
           .attr('data-video-id', video.videoId)
           .append(
-            this.jQuery('<img />')
-              .attr('src', video.thumbs[3].url)
-              .attr('alt', video.title)
-          )
-          .append('<br />')
-          .append(video.title)
-          .click(function (event) {
+            this.jQuery('<li />')
+              .append(
+                this.jQuery('<img />')
+                  .addClass('video-thumb')
+                  .attr('src', video.thumbs[3].url)
+                  .attr('alt', video.title)
+                  .attr('width', 100)
+              )
+              .append(
+                this.jQuery('<span />')
+                  .addClass('video-detail')
+                  .text(video.title)
+              )
+          ).click(function (event) {
+            event.preventDefault();
             var videoId = $(this).attr('data-video-id');
             player.play(videoId);
             socket.emit('play', videoId);
