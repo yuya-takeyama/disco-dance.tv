@@ -3,7 +3,7 @@
   <head>
     <title><%= title %></title>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.3/jquery.min.js"></script>
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
     <script type="text/javascript" src="/javascripts/jQuery.jQTubeUtil.js"></script>
     <script type="text/javascript" src="/javascripts/socket.io.js"></script>
     <script type="text/javascript" src="/javascripts/disco-dance.tv.js"></script>
@@ -22,6 +22,11 @@
               jQTubeUtil: jQTubeUtil,
               player: player,
               counter: counter,
+              chat: new DiscoDanceTV.Chat({
+                jQuery: $,
+                socket: socket,
+                messages: $('#chat-messages'),
+              }),
               searchResult: new DiscoDanceTV.View.SearchResult({
                 jQuery: $,
                 list: $('#search-result-list'),
@@ -39,6 +44,7 @@
       });
     </script>
     <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/base/jquery-ui.css" />
   </head>
   <body>
     <h1>Disco-Dance.tv</h1>

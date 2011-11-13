@@ -16,7 +16,7 @@ h1 {
   width: 920px;
 }
 
-#video, #search {
+#video, #rightbar {
   float: left;
 }
 
@@ -24,11 +24,11 @@ h1 {
   width: 540px;
 }
 
-#search {
+#rightbar {
   font-size: 80%;
   width: 360px;
   max-height: 365px;
-  padding: 0 10px;
+  padding: 0;
   overflow: scroll;
 }
 
@@ -40,6 +40,8 @@ h1 {
   list-style-type: none;
   margin: 0;
   padding: 0;
+  height: 288px;
+  overflow: scroll;
 }
 
 .video-thumb, .video-detail {
@@ -53,13 +55,11 @@ h1 {
 }
 
 .video-detail {
-  width: 250px;
-  padding: 0.3em;
+  width: 200px;
 }
 
 .video-item {
   clear: both;
-  padding: 0.2em 0;
   min-height: 70px;
 }
 
@@ -77,6 +77,40 @@ h1 {
 #counter {
   clear: both;
   width: 100%;
+  height: 365px;
   text-align: right;
   padding: 0.2em 1em;
+}
+
+#chat-name {
+  width: 20%;
+}
+
+#chat-text {
+  width: 60%;
+}
+
+#chat-messages {
+  height: 288px;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  overflow: scroll;
+}
+
+#chat-messages > li {
+  padding: 0.3em;
+}
+
+#chat-messages > li > .name {
+  font-weight: 900;
+  color: #f88;
+}
+
+#chat-messages > li > .message {
+  text-indent: 1em;
+}
+
+#chat-messages > li > .time {
+  color: #aaa;
 }

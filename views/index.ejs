@@ -1,13 +1,35 @@
 <div id="content">
   <div id="video"></div>
 
-  <div id="search">
-    <form action="#" id="search-form">
-      <input type="text" value="" id="search-keyword" size="45" placeholder="Keyword to search videos" />
-    </form>
-    <div id="search-result">
-      <ul id="search-result-list">
-      </ul>
+  <script type="text/javascript">
+    $(function () {
+      $('#rightbar').tabs();
+    });
+  </script>
+
+  <div id="rightbar">
+    <ul>
+      <li><a href="#chat">Chat</a></li>
+      <li><a href="#search">Video Search</a></li>
+    </ul>
+
+    <div id="chat">
+      <form id="chat-form" action="#">
+        <input type="text" name="name" placeholder="Your name" id="chat-name" />
+        <input type="text" name="message" placeholder="Input your message" id="chat-text" />
+        <input type="submit" value="send" />
+      </form>
+      <ul id="chat-messages"></ul>
+    </div>
+
+    <div id="search">
+      <form action="#" id="search-form">
+        <input type="text" value="" id="search-keyword" size="45" placeholder="Keyword to search videos" />
+      </form>
+      <div id="search-result">
+        <ul id="search-result-list">
+        </ul>
+      </div>
     </div>
   </div>
 
