@@ -26,6 +26,7 @@ var DiscoDanceTV = {};
     this.player  = deps.player;  // DiscoDanceTV.Player
     this.counter = deps.counter; // DiscoDanceTV.Counter
     this.jQTubeUtil = deps.jQTubeUtil; // jQTubeUtil
+    this.chat         = deps.chat;         // DiscoDanceTV.Chat
     this.searchResult = deps.searchResult; // DiscoDanceTV.View.SearchResult
   };
 
@@ -60,6 +61,7 @@ var DiscoDanceTV = {};
       , socket  = this.socket
       , $       = this.jQuery
       , counter = this.counter
+      , chat         = this.chat
       , searchResult = this.searchResult
       , jQTubeUtil   = this.jQTubeUtil;
 
@@ -82,7 +84,7 @@ var DiscoDanceTV = {};
 
     $('#chat-form').submit(function (event) {
       event.preventDefault();
-      socket.emit('chat', $('#chat-text').val());
+      chat.send();
     });
 
     socket.on('hello', function (data) {
@@ -102,9 +104,7 @@ var DiscoDanceTV = {};
     });
 
     socket.on('chat', function (data) {
-      $('#chat-messages').prepend(
-        $('<li />')
-          .text(data));
+      chat.receive(data);
     });
   };
 })(DiscoDanceTV);
@@ -227,6 +227,55 @@ var DiscoDanceTV = {};
 
   Counter.getCount = function () {
     return this.count;
+  };
+})(DiscoDanceTV);
+
+/**
+ * DiscoDanceTV.Chat
+ *
+ * @author Yuya Takeyama
+ */
+(function (DiscoDanceTV) {
+  DiscoDanceTV.Chat = function (deps) {
+    this.jQuery   = this.$ = deps.jQuery;
+    this.socket   = deps.socket;
+    this.messages = deps.messages;
+    this._name = this.$('#chat-name');
+    this._input = this.$('#chat-text');
+  };
+
+  var p = DiscoDanceTV.Chat.prototype;
+
+  p.send = function () {
+    var name = this._name.val()
+      , message = this._input.val();
+
+    if (name && name !== '' && message && message !== '') {
+      this.socket.emit('chat', {
+        name: this._name.val(),
+        body: this._input.val(),
+      });
+      this._input.val('');
+    }
+  };
+
+  p.receive = function (message) {
+    var $ = this.$;
+
+    this.messages.prepend(
+      $('<li />')
+        .append(
+          $('<span />')
+            .addClass('name')
+            .text(message.name + ': '))
+        .append(
+          $('<span />')
+            .addClass('message')
+            .text(message.body))
+        .append(
+          $('<span />')
+            .addClass('time')
+            .text(' (' + message.time  + ')')));
   };
 })(DiscoDanceTV);
 

@@ -56,6 +56,8 @@ io.sockets.on('connection', function (socket) {
   });
 
   socket.on('chat', function (data) {
+    var date = new Date;
+    data.time = date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
     io.sockets.emit('chat', data);
   });
 

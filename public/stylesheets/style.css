@@ -82,8 +82,12 @@ h1 {
   padding: 0.2em 1em;
 }
 
+#chat-name {
+  width: 20%;
+}
+
 #chat-text {
-  width: 90%;
+  width: 60%;
 }
 
 #chat-messages {
@@ -96,4 +100,17 @@ h1 {
 
 #chat-messages > li {
   padding: 0.3em;
+}
+
+#chat-messages > li > .name {
+  font-weight: 900;
+  color: #f88;
+}
+
+#chat-messages > li > .message {
+  text-indent: 1em;
+}
+
+#chat-messages > li > .time {
+  color: #aaa;
 }

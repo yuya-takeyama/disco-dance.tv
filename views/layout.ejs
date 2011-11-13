@@ -22,6 +22,11 @@
               jQTubeUtil: jQTubeUtil,
               player: player,
               counter: counter,
+              chat: new DiscoDanceTV.Chat({
+                jQuery: $,
+                socket: socket,
+                messages: $('#chat-messages'),
+              }),
               searchResult: new DiscoDanceTV.View.SearchResult({
                 jQuery: $,
                 list: $('#search-result-list'),
